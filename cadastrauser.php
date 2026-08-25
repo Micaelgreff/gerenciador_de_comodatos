@@ -8,13 +8,13 @@ if(empty($_POST['cemail']) || empty($_POST['csenha']) || empty($_POST['cfirst_na
     echo "nao foi";
 }  
 
-$cadnome = mysqli_real_escape_string($conexao, $_POST['cfirst_name']);  //pega o email pra var usuario
-$cadsobrenome = mysqli_real_escape_string($conexao, $_POST['clast_name']);
+$cadnome = mysqli_real_escape_string($conexao, $_POST['cfirst_name'] . $_POST['clast_name']);  //pega o email pra var usuario
+//$cadsobrenome = mysqli_real_escape_string($conexao, $_POST['clast_name']);
 $cademail = mysqli_real_escape_string($conexao, $_POST['cemail']);
 $senha = $_POST['csenha'];   //pega a senha pra var senha
 
 
-$caduser = "INSERT INTO usuario (nome, sobrenome, email, senha) VALUES ('$cadnome', '$cadsobrenome', '$cademail', md5('$senha'))";  //variavel de query setada
+$caduser = "INSERT INTO users (name, email, password) VALUES ('$cadnome', '$cademail', md5('$senha'))";  //variavel de query setada
 if ($conexao->query($caduser) === TRUE) {
     echo "Usuário cadastrado com sucesso!";
   } else {

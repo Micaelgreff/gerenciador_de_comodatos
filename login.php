@@ -11,7 +11,7 @@ $usuario = mysqli_real_escape_string($conexao, $_POST['email']);  //pega o email
 $senha = mysqli_real_escape_string($conexao, $_POST['senha']);   //pega a senha pra var senha
 $passw = $_POST['senha'];
 
-$query = "select * from usuario where email = '{$usuario}' and senha = md5('$senha')";  //variavel de query setada
+$query = "select * from users where email = '{$usuario}' and password = md5('$senha')";  //variavel de query setada
 $result = mysqli_query($conexao, $query);  //pega o resultado da query
 $row = mysqli_num_rows($result);   //verificar o número de linhas da query executada
 
