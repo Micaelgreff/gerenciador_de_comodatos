@@ -1,0 +1,102 @@
+/* ==========================================================================
+   Estilos de Revitalização da Tela de Login - GDC
+   ========================================================================== */
+
+body.body-login {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+}
+
+.login-card {
+    border-radius: 1.25rem !important;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.bg-login-image {
+    background: linear-gradient(135deg, rgba(78, 114, 223, 0.165), rgba(34, 74, 190, 0.95)), 
+                url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.input-group-custom {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-group-custom .input-icon {
+    position: absolute;
+    left: 1rem;
+    color: #a0aec0;
+    font-size: 0.9rem;
+    z-index: 10;
+    transition: color 0.2s ease;
+}
+
+.form-control-modern {
+    height: 48px;
+    padding-left: 2.75rem !important;
+    padding-right: 2.75rem !important;
+    border-radius: 0.5rem !important;
+    border: 1.5px solid #e2e8f0;
+    font-size: 0.9rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.form-control-modern:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.15);
+}
+
+.form-control-modern:focus + .input-icon,
+.input-group-custom:focus-within .input-icon {
+    color: #4e73df;
+}
+
+.btn-toggle-password {
+    position: absolute;
+    right: 0.75rem;
+    background: transparent;
+    border: none;
+    color: #a0aec0;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+}
+
+.btn-toggle-password:focus {
+    outline: none;
+}
+
+.btn-toggle-password:hover {
+    color: #4e73df;
+}
+
+.btn-modern {
+    height: 48px;
+    border-radius: 0.5rem !important;
+    background: linear-gradient(135deg, #4e73df 0%, #2e59d9 100%);
+    border: none;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+}
+
+.btn-modern:hover {
+    background: linear-gradient(135deg, #2e59d9 0%, #224abe 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08) !important;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #4e73df;
+    border-color: #4e73df;
+}
+
+a.text-primary:hover {
+    text-decoration: underline !important;
+}
