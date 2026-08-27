@@ -1,8 +1,5 @@
 <?php
-define('HOST', '127.0.0.1');
-define('USUARIO', 'host_api');
-define('SENHA', 'teste123!@#');
-define('DB', 'comodatos');
+require_once __DIR__ . '/config/env_export.php';
 
-$conexao = mysqli_connect(HOST, USUARIO, SENHA, DB) or die('Não foi possível conectar');
+$conexao = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE_NAME) or die('Não foi possível conectar');
 ?>

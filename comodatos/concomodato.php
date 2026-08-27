@@ -1,10 +1,5 @@
 <?php
+require_once __DIR__ . '/../config/env_export.php'; 
 
-define ('HOSTCOMODATO', '127.0.0.1');
-define ('USUARIOCOMODATO', 'host_api');
-define ('SENHACOMODATO', 'teste123!@#');
-define ('DBCOMODATO', 'comodatos');
-
-$concomodato = mysqli_connect(HOSTCOMODATO, USUARIOCOMODATO, SENHACOMODATO, DBCOMODATO) or die('Não foi possível conectar');
-
+$concomodato = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE_NAME) or die('Não foi possível conectar');
 ?>
