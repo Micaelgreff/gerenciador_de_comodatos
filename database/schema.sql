@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`name` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
 	`email` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
-	`password` VARCHAR(32) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`password` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
 	`active` TINYINT(4) NULL DEFAULT '1',
 	`created_at` DATETIME NULL DEFAULT current_timestamp(),
 	`updated_at` DATETIME NULL DEFAULT current_timestamp(),
@@ -92,6 +92,7 @@ CREATE TABLE IF NOT EXISTS `comodatos` (
     `comodatario_id` INT UNSIGNED NOT NULL,
     `data_inicio` DATE NOT NULL,
     `data_fim` DATE,
+    `devolvido_em` DATETIME NULL,
     `observacao` TEXT,
     `ativo` TINYINT(1) NOT NULL DEFAULT 1,
     `criado_em` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -128,3 +129,6 @@ CREATE TABLE IF NOT EXISTS `comodato_itens` (
 );
 
 
+
+CREATE TABLE IF NOT EXISTS app_write_lock (id TINYINT PRIMARY KEY) ENGINE=InnoDB;
+INSERT IGNORE INTO app_write_lock VALUES (1);

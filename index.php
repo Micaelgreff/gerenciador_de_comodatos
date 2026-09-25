@@ -1,5 +1,7 @@
 <?php
-session_start();
+require __DIR__.'/app/bootstrap.php';
+session_init();
+if(isset($_SESSION['user_id'])) redirect('app.php');
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -10,9 +12,9 @@ session_start();
     <title>GDC - Login</title>
 
     <!-- Fontes e Ícones -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    
+
     <!-- CSS Bootstrap 4 / SB Admin 2 -->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/estilo_v2.css">
@@ -42,46 +44,39 @@ session_start();
                         </div>
                         <div class="col-lg-6 bg-white">
                             <div class="p-5 d-flex flex-column justify-content-center h-100">
-                                
+
                                 <div class="text-center mb-4">
                                     <h1 class="h4 text-gray-900 font-weight-bold mb-1">Bem vindo de volta!</h1>
                                     <p class="text-muted small">Acesse sua conta para continuar</p>
                                 </div>
-                                <form class="user" action="login.php" method="POST">
+                                <form class="user" action="login.php" method="POST"><?= csrf() ?><?php if(!empty($_SESSION["naoautentic"])): ?><div class="alert alert-danger" role="alert">E-mail ou senha inválidos, ou conta inativa.</div><?php unset($_SESSION["naoautentic"]); endif ?>
                                     <div class="form-group mb-3">
                                         <label for="email" class="small text-muted font-weight-bold">Endereço de E-mail</label>
                                         <div class="input-group-custom">
                                             <i class="fas fa-envelope input-icon"></i>
                                             <input type="email" name="email" class="form-control form-control-modern"
                                                 id="email" aria-describedby="emailHelp"
-                                                placeholder="Enter Email Address..." required autocomplete="email">
+                                                placeholder="seu.email@empresa.com" required autocomplete="email">
                                         </div>
                                     </div>
 
                                     <div class="form-group mb-3">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <label for="senha" class="small text-muted font-weight-bold">Senha</label>
-                                            
+
                                         </div>
                                         <div class="input-group-custom">
                                             <i class="fas fa-lock input-icon"></i>
                                             <input type="password" name="senha" class="form-control form-control-modern"
-                                                id="senha" placeholder="Password" required>
-                                            <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility()">
+                                                id="senha" placeholder="Sua senha" autocomplete="current-password" required>
+                                            <button type="button" aria-label="Mostrar ou ocultar senha" class="btn-toggle-password" onclick="togglePasswordVisibility()">
                                                 <i class="fas fa-eye" id="toggleIcon"></i>
                                             </button>
                                         </div>
-                                        <div class="form-badge">
-                                            <a class="small text-primary font-weight-600" href="view/forgot-password.html">Esqueceu a senha?</a>
-                                        </div>
+
                                     </div>
 
-                                    <div class="form-group mb-4">
-                                        <div class="custom-control custom-checkbox small">
-                                            <input type="checkbox" class="custom-control-input" id="customCheck">
-                                            <label class="custom-control-label text-muted" for="customCheck">Mantenha-me conectado</label>
-                                        </div>
-                                    </div>
+
 
                                     <input type="submit" value="Entrar" class="btn btn-primary btn-block btn-modern font-weight-bold py-2 shadow-sm">
                                 </form>
@@ -89,9 +84,7 @@ session_start();
                                 <hr class="my-4">
 
                                 <div class="text-center">
-                                    <a class="small text-muted" href="view/register.html">
-                                        Não tem uma conta? <span class="text-primary font-weight-bold">Crie sua conta!</span>
-                                    </a>
+                                    <span class="small text-muted">Para obter acesso ou redefinir sua senha, procure o responsável pelo sistema.</span>
                                 </div>
 
                             </div>

@@ -1,23 +1,12 @@
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-
-    RewriteBase /comodato
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-
-    RewriteRule ^(.*)$ index.php [QSA,L]
-</IfModule>
-
-
 Options -Indexes
-
+DirectoryIndex index.php
 ServerSignature Off
-
-<FilesMatch "^\.|\.(env|log|ini|sh|sql|bak|config)$">
+<FilesMatch "(^\.|\.(env|log|ini|sql|bak|md|json|lock)$)">
     Require all denied
 </FilesMatch>
-
-ErrorDocument 404 /404.php
-ErrorDocument 500 /500.php
-
-DirectoryIndex index.php index.html
+<Files "bootstrap.php">
+    Require all denied
+</Files>
+<Files "conection.php">
+    Require all denied
+</Files>

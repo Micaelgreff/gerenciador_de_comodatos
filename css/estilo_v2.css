@@ -14,8 +14,7 @@ body.body-login {
 }
 
 .bg-login-image {
-    background: linear-gradient(135deg, rgba(78, 114, 223, 0.165), rgba(34, 74, 190, 0.95)), 
-                url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80');
+    background: radial-gradient(circle at 25% 25%, #5984cf 0, transparent 55%), linear-gradient(145deg, #284d89, #112d36);
     background-size: cover;
     background-position: center;
     position: relative;
