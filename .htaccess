@@ -1,0 +1,12 @@
+Options -Indexes
+DirectoryIndex index.php
+ServerSignature Off
+<FilesMatch "(^\.|\.(env|log|ini|sql|bak|md|json|lock)$)">
+    Require all denied
+</FilesMatch>
+<Files "bootstrap.php">
+    Require all denied
+</Files>
+<Files "conection.php">
+    Require all denied
+</Files>
