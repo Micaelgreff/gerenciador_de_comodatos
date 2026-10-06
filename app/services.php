@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/pickers.php';
 function options(string $table, int $current=0): array {
     global $modules;
     if($table==='modelos') return query('SELECT m.id, CONCAT(ma.nome," · ",m.nome," · ",t.nome) label FROM modelos m JOIN marcas ma ON ma.id=m.marca_id JOIN tipos_equipamentos t ON t.id=m.tipo_equipamento_id WHERE m.ativo=1 OR m.id=? ORDER BY label',[$current])->fetchAll();
@@ -49,15 +50,25 @@ function save_record(string $table, int $id, array $input): int {
             }
         }
         if($table==='inventario' && $old && $old['modelo_id']!=$values['modelo_id'] && query('SELECT id FROM comodato_itens WHERE inventario_id=? LIMIT 1',[$id])->fetch()) throw new DomainException('O modelo de um item com histórico de empréstimo não pode ser alterado.');
+        if($table==='inventario' && (isset($input['inventario_marca_id']) || isset($input['inventario_tipo_id']))) {
+            $model=query('SELECT marca_id,tipo_equipamento_id FROM modelos WHERE id=?',[$values['modelo_id']])->fetch();
+            if(!$model || (int)$model['marca_id']!==(int)($input['inventario_marca_id']??0) || (int)$model['tipo_equipamento_id']!==(int)($input['inventario_tipo_id']??0)) throw new DomainException('Selecione marca, tipo e modelo compatíveis.');
+        }
         $items=[];
         if($table==='comodatos') {
             if($values['data_fim'] && $values['data_fim']<$values['data_inicio']) throw new DomainException('A previsão de devolução deve ser igual ou posterior ao início.');
-            $items=array_values(array_unique(array_map('intval',(array)($input['itens']??[])))); sort($items);
+            $items=array_map('intval',(array)($input['itens']??[]));
+            if(count($items)!==count(array_unique($items))) throw new DomainException('O mesmo equipamento não pode ser selecionado duas vezes.');
+            sort($items);
             if(!$items) throw new DomainException('Selecione ao menos um item do inventário.');
+            $token=(string)($input['reserva_token']??'');
             foreach($items as $item) {
                 $record=query('SELECT id FROM inventario WHERE id=? AND ativo=1 FOR UPDATE',[$item])->fetch();
                 if(!$record) throw new DomainException('Um dos itens não está ativo no inventário.');
                 if(query('SELECT id FROM comodato_itens WHERE inventario_id=? AND ativo=1 AND comodato_id<>?',[$item,$id])->fetch()) throw new DomainException('Um dos itens já está em outro comodato aberto. Atualize a seleção.');
+                $reservation=query('SELECT token FROM inventario_reservas WHERE inventario_id=? AND expira_em>NOW()',[$item])->fetchColumn();
+                if($reservation && $reservation!==$token) throw new DomainException('Um dos equipamentos está reservado em outra sessão. Selecione outro item.');
+                if($token!=='' && !$reservation) throw new DomainException('A reserva de um equipamento expirou. Selecione-o novamente antes de salvar.');
             }
         }
         if($id) {
@@ -70,6 +81,7 @@ function save_record(string $table, int $id, array $input): int {
         if($table==='comodatos') {
             query('UPDATE comodato_itens SET ativo=0 WHERE comodato_id=?',[$id]);
             foreach($items as $item) query('INSERT INTO comodato_itens (comodato_id,inventario_id,ativo) VALUES (?,?,1) ON DUPLICATE KEY UPDATE ativo=1',[$id,$item]);
+            if($token!=='') query('DELETE FROM inventario_reservas WHERE token=?',[$token]);
         }
         db()->commit(); return $id;
     } catch(Throwable $ex) { if(db()->inTransaction()) db()->rollBack(); throw $ex; }
@@ -93,9 +105,9 @@ function listing(string $table, string $search='', string $status='', int $page=
         $select.=', c.nome_fantasia comodante, p.nome_completo comodatario, (SELECT COUNT(*) FROM comodato_itens ci WHERE ci.comodato_id=a.id AND ci.ativo=1) itens';
         $searchCols=['CAST(a.id AS CHAR)','c.nome_fantasia','p.nome_completo'];
     } elseif($table==='inventario') {
-        $joins=' JOIN modelos m ON m.id=a.modelo_id JOIN marcas ma ON ma.id=m.marca_id';
-        $select.=', CONCAT(ma.nome," · ",m.nome) modelo, (SELECT c.id FROM comodato_itens ci JOIN comodatos c ON c.id=ci.comodato_id WHERE ci.inventario_id=a.id AND ci.ativo=1 AND c.ativo=1 LIMIT 1) comodato_id, (SELECT p.nome_completo FROM comodato_itens ci JOIN comodatos c ON c.id=ci.comodato_id JOIN comodatarios p ON p.id=c.comodatario_id WHERE ci.inventario_id=a.id AND ci.ativo=1 AND c.ativo=1 LIMIT 1) responsavel';
-        $searchCols=['a.patrimonio','m.nome','ma.nome','CAST(a.id AS CHAR)'];
+        $joins=' JOIN modelos m ON m.id=a.modelo_id JOIN marcas ma ON ma.id=m.marca_id JOIN tipos_equipamentos t ON t.id=m.tipo_equipamento_id';
+        $select.=', t.nome tipo, CONCAT(ma.nome," · ",m.nome) modelo, (SELECT c.id FROM comodato_itens ci JOIN comodatos c ON c.id=ci.comodato_id WHERE ci.inventario_id=a.id AND ci.ativo=1 AND c.ativo=1 LIMIT 1) comodato_id, (SELECT p.nome_completo FROM comodato_itens ci JOIN comodatos c ON c.id=ci.comodato_id JOIN comodatarios p ON p.id=c.comodatario_id WHERE ci.inventario_id=a.id AND ci.ativo=1 AND c.ativo=1 LIMIT 1) responsavel';
+        $searchCols=['a.patrimonio','m.nome','ma.nome','t.nome','CAST(a.id AS CHAR)'];
     } elseif($table==='modelos') {
         $joins=' JOIN marcas ma ON ma.id=a.marca_id JOIN tipos_equipamentos t ON t.id=a.tipo_equipamento_id'; $select.=',ma.nome marca,t.nome tipo'; $searchCols=['a.nome','ma.nome','t.nome'];
     } else { $searchCols=['a.'.$modules[$table]['label']]; }

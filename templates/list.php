@@ -3,7 +3,7 @@ $search=trim((string)($_GET['q']??'')); $status=(string)($_GET['status']??'');
 [$rows,$count,$page,$pages]=listing($module,$search,$status,(int)($_GET['page']??1));
 $columns=match($module) {
  'comodatos'=>['id'=>'Nº','comodante'=>'Comodante','comodatario'=>'Comodatário','data_inicio'=>'Início','data_fim'=>'Previsão','devolvido_em'=>'Devolução'],
- 'inventario'=>['id'=>'Item','patrimonio'=>'Patrimônio','modelo'=>'Modelo','responsavel'=>'Responsável'],
+ 'inventario'=>['id'=>'Item','patrimonio'=>'Patrimônio','tipo'=>'Tipo','modelo'=>'Modelo','responsavel'=>'Responsável'],
  'modelos'=>['nome'=>'Modelo','marca'=>'Marca','tipo'=>'Tipo'],
  'users'=>['name'=>'Nome','email'=>'E-mail'],
  'comodantes'=>['nome_fantasia'=>'Nome fantasia','razao_social'=>'Razão social','cnpj'=>'CNPJ'],
