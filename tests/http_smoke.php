@@ -12,7 +12,7 @@ function request_local(string $path,?string $cookie=null,?array $post=null):arra
 try {
  $paths=['app.php'];foreach(array_keys(require __DIR__.'/../app/modules.php') as $m){$paths[]='app.php?module='.$m;$paths[]='app.php?module='.$m.'&action=edit';}
  foreach($paths as $path){[$code,$body]=request_local($path,$cookie);if($code!==200 || str_contains($body,'Fatal error') || str_contains($body,'Warning:'))throw new RuntimeException('HTTP failed: '.$path.' '.$code);}
- foreach(['legacy/menu.php','config/env_export.php','database/setup.php','old/index.php','doc-comodatos/teste_word.php'] as $path){if(request_local($path)[0]!==403)throw new RuntimeException('Not blocked: '.$path);}
+ foreach(['app/controllers/application.php','config/env_export.php','database/setup.php','templates/login.php','doc-comodatos/teste_word.php'] as $path){if(request_local($path)[0]!==403)throw new RuntimeException('Not blocked: '.$path);}
  if(request_local('app.php')[0]!==302)throw new RuntimeException('Authentication guard failed');
  if(($csrfResponse=request_local('app.php?module=marcas',$cookie,['nome'=>'CSRF invalid test']))[0]!==403)throw new RuntimeException('CSRF guard failed: '.$csrfResponse[0].' '.strip_tags($csrfResponse[1]));
  if(request_local('app.php?module=unknown',$cookie)[0]!==404)throw new RuntimeException('Module allowlist failed');

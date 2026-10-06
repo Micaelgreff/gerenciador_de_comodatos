@@ -2,7 +2,7 @@
 
 use PhpOffice\PhpWord\SimpleType\TextAlignment;
 
-require_once '../bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 require '../vendor/autoload.php';
 
 // Creating the new document...

@@ -1,12 +1,15 @@
 Options -Indexes
 DirectoryIndex index.php
 ServerSignature Off
+RewriteEngine On
+RewriteBase /comodato/
+# Compatibility URLs: discard old parameters and reopen the current GET form.
+RewriteRule ^(?:home|menu|dadoslogin|verificalogin)\.php$ app.php [R=303,L,QSD]
+RewriteRule ^esqueceu\.php$ index.php [R=303,L,QSD]
+RewriteRule ^cadastra_comodato\.php$ app.php?module=comodatos [R=303,L,QSD]
+RewriteRule ^cadComodato\.php$ app.php?module=comodatos&action=edit [R=303,L,QSD]
+RewriteRule ^cadastrauser\.php$ app.php?module=users [R=303,L,QSD]
+RewriteRule ^cadUsuario\.php$ app.php?module=users&action=edit [R=303,L,QSD]
 <FilesMatch "(^\.|\.(env|log|ini|sql|bak|md|json|lock)$)">
     Require all denied
 </FilesMatch>
-<Files "bootstrap.php">
-    Require all denied
-</Files>
-<Files "conection.php">
-    Require all denied
-</Files>

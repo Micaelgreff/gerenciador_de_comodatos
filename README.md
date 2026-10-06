@@ -18,8 +18,8 @@ Ao selecionar um equipamento, o servidor cria uma reserva exclusiva para aquele 
 
 ## Estrutura
 
-- `index.php` e `login.php`: entrada e autenticação; a interface de login fica em `templates/login.php`.
-- `app.php`: entrada autenticada e coordenação das requisições.
+- `index.php`, `app.php`, `login.php` e `logout.php`: pontos de entrada públicos; apenas carregam seus controladores internos.
+- `app/controllers/`: entrada autenticada, exibição do login, autenticação e encerramento da sessão.
 - `app/bootstrap.php`: conexão PDO, sessão, escape HTML e proteção CSRF.
 - `app/modules.php`: definição dos oito cadastros e seus campos.
 - `app/services.php`: validação, persistência, disponibilidade, devolução e busca.
@@ -29,12 +29,13 @@ Ao selecionar um equipamento, o servidor cria uma reserva exclusiva para aquele 
 - `config/`: configuração local existente, preservada.
 - `database/`: schema, migrações incrementais e execução por CLI.
 - `tests/`: testes de integração e verificações HTTP locais.
-- `legacy/`: cópias dos fluxos substituídos, bloqueadas pelo Apache.
-- `old/` e `doc-comodatos/`: referências anteriores preservadas e bloqueadas para acesso web; o gerador de documentos antigo contém dados fixos e não foi integrado ao novo fluxo.
+- `doc-comodatos/`: protótipo de documentos bloqueado para acesso web, com seu carregador próprio; não foi integrado ao fluxo atual.
 
-Entradas PHP antigas redirecionam para os módulos atuais. POSTs dos formulários antigos não são reaplicados: o redirecionamento abre o fluxo atual. Foram removidos os HTMLs de demonstração, `index.html`, imagens e fontes sem uso, fontes SCSS do painel antigo, scripts de demonstração e bibliotecas JavaScript sem referências na aplicação: jQuery, jQuery Easing, Bootstrap JS, Chart.js e DataTables. O login mantém o visual existente e usa JavaScript nativo para mostrar ou ocultar a senha.
+Os atalhos antigos da raiz são redirecionados pelo `.htaccess`, sem arquivos PHP individuais. Os redirecionamentos usam HTTP 303 e descartam parâmetros antigos; POSTs dos formulários antigos abrem o fluxo atual sem reaplicar dados. Atalhos nas pastas `view/` e `comodatos/` continuam como entradas de compatibilidade. Foram removidos os HTMLs de demonstração, `index.html`, imagens e fontes sem uso, fontes SCSS do painel antigo, scripts de demonstração e bibliotecas JavaScript sem referências na aplicação: jQuery, jQuery Easing, Bootstrap JS, Chart.js e DataTables. O login mantém o visual existente e usa JavaScript nativo para mostrar ou ocultar a senha.
 
-As referências de backend Node/Express/MSSQL permanecem arquivadas; não há build de frontend e o sistema atual não depende delas. As cópias em `legacy/`, `old/` e `doc-comodatos/` são referências de código e documentos, sem garantia de funcionamento com os recursos antigos removidos. Nenhuma dependência foi baixada.
+`composer.json` e `composer.lock` permanecem na raiz, junto de `vendor/`, para gerenciamento das dependências PHP. `.htaccess`, arquivos do Git e este README também pertencem à raiz. A conexão antiga `conection.php` e os manifestos Node sem uso foram removidos; não há build de frontend nem aplicação Node ativa. A pasta local `node_modules/` permanece ignorada pelo Git e não participa da aplicação. O protótipo de documentos é uma referência de código, sem garantia de funcionamento com os recursos antigos removidos. Nenhuma dependência foi baixada.
+
+O Apache precisa de `mod_rewrite` para os atalhos antigos. A instalação atual usa `RewriteBase /comodato/`; ajuste essa linha no `.htaccess` se publicar a aplicação em outro caminho. O acesso HTTP direto a `app/` permanece bloqueado.
 
 ## Banco e instalação
 
@@ -51,6 +52,8 @@ Senhas novas usam `password_hash`. Hashes MD5 antigos são aceitos somente para 
 A trava `app_write_lock` serializa as gravações da aplicação e impede atribuições concorrentes do mesmo item. Integrações futuras que escrevam diretamente no banco precisam respeitar a mesma regra. Datas usam America/Sao_Paulo no PHP; o MariaDB local deve manter o fuso compatível.
 
 ## Verificação local
+
+`C:\xampp\php\php.exe tests\root_routes.php` confere no Apache local os redirecionamentos antigos por GET e POST e o bloqueio dos controladores internos. Não segue redirecionamentos, carrega configuração ou consulta o banco.
 
 `C:\xampp\php\php.exe tests\frontend_assets.php` verifica os recursos do login e as fontes referenciadas pelos estilos, sem carregar configuração ou banco. Os testes de integração também conferem os caminhos dos recursos de todas as telas renderizadas.
 
