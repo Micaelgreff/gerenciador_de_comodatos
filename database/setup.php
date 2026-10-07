@@ -41,10 +41,33 @@ echo "Schema executado." . PHP_EOL;
 
 
 $seed = file_get_contents(__DIR__ . '/seed.sql');
-if (!$conn->multi_query($seed)) {
-    die("Erro ao executar seed.sql: " . $conn->error . PHP_EOL);
+if ($seed === false) {
+    die("Erro ao ler seed.sql." . PHP_EOL);
 }
-echo "Seed executado." . PHP_EOL;
+if (trim($seed) !== '') {
+    if (!$conn->multi_query($seed)) {
+        die("Erro ao executar seed.sql: " . $conn->error . PHP_EOL);
+    }
+    while ($conn->more_results() && $conn->next_result()) {
+    }
+    echo "Seed executado." . PHP_EOL;
+} else {
+    echo "seed.sql vazio; execução ignorada." . PHP_EOL;
+}
+
+$name = MASTER_USER;
+$email = MASTER_EMAIL;
+$password = password_hash(MASTER_PASSWORD, PASSWORD_DEFAULT);
+$stmt = $conn->prepare('INSERT INTO users (name, email, password) SELECT ?, ?, ? WHERE NOT EXISTS (SELECT 1 FROM users WHERE name = ?)');
+if (!$stmt) {
+    die("Erro ao preparar seed do usuário master: " . $conn->error . PHP_EOL);
+}
+$stmt->bind_param('ssss', $name, $email, $password, $name);
+if (!$stmt->execute()) {
+    die("Erro ao inserir usuário master: " . $stmt->error . PHP_EOL);
+}
+echo ($stmt->affected_rows > 0 ? "Usuário master criado." : "Usuário master já existe.") . PHP_EOL;
+$stmt->close();
 
 
 $conn->close();

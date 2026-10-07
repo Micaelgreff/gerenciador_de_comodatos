@@ -8,5 +8,8 @@ define('DB_HOST', $_ENV['DB_HOST']);
 define('DB_USER', $_ENV['DB_USER']);
 define('DB_PASSWORD', $_ENV['DB_PASSWORD']);
 define('DB_DATABASE_NAME', $_ENV['DB_DATABASE_NAME']);
+define('MASTER_USER', $_ENV['MASTER_USER']);
+define('MASTER_EMAIL', $_ENV['MASTER_EMAIL']);
+define('MASTER_PASSWORD', $_ENV['MASTER_PASSWORD']);
 
 ?>
